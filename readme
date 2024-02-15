@@ -1,0 +1,21 @@
+{
+    "name" : "Pizza",
+    "price" : {
+        "Size" : {
+            "priceType" : "base",
+            "availableOptions" : ["Small", "Medium", "Large"]
+        },
+        "Crust" : {
+            "priceType" : "additional",
+            "availableOptions" : ["Think", "Thick"]
+        }
+    },
+    "attributes" : [
+        {
+            "name" : "isHit",
+            "widgetType" : "switch",
+            "defaultValue": "Yes",
+            "availableOptions" : ["Yes", "No"]
+        }
+    ]
+}
