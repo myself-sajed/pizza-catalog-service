@@ -1,5 +1,5 @@
 import { body } from "express-validator";
-import { priceType } from "./category-model";
+import { priceType } from "./category-types";
 
 export default [
     body("name").exists().withMessage("A valid category name is required"),
@@ -16,6 +16,8 @@ export default [
                     )}`,
                 );
             }
+
+            return true;
         }),
     body("attributes").exists().withMessage("Attribute field is missing"),
 ];
