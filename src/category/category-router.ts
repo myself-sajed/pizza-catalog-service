@@ -8,6 +8,11 @@ import { CategoryController } from "./category-controller";
 import categoryValidator from "./category-validator";
 import { CategoryService } from "./category-service";
 import createHttpError from "http-errors";
+import authenticateAccessToken from "../common/middlewares/authenticateAccessToken";
+import canAccess from "../common/middlewares/canAccess";
+import { Roles } from "../config/constants";
+import categoryUpdateValidator from "./category-update-validator";
+import categoryFindValidator from "./category-find-validator";
 
 // wrapper for each request controller for catching errors efficiently, because global error handler only does not catch error when they are thown in async functions
 const asyncWrapper = (requestHandler: RequestHandler) => {
@@ -24,6 +29,41 @@ const asyncWrapper = (requestHandler: RequestHandler) => {
 const router = express.Router();
 const categoryService = new CategoryService();
 const categoryController = new CategoryController(categoryService);
-router.post("/", categoryValidator, asyncWrapper(categoryController.create));
+
+router.post(
+    "/create",
+    authenticateAccessToken as RequestHandler,
+    canAccess([Roles.Admin]),
+    categoryValidator,
+    asyncWrapper(categoryController.create),
+);
+
+router.post(
+    "/update",
+    authenticateAccessToken as RequestHandler,
+    canAccess([Roles.Admin]),
+    categoryUpdateValidator,
+    asyncWrapper(categoryController.update),
+);
+
+router.get(
+    "/getList",
+    authenticateAccessToken as RequestHandler,
+    asyncWrapper(categoryController.getList),
+);
+
+router.post(
+    "/getCategory",
+    authenticateAccessToken as RequestHandler,
+    categoryFindValidator,
+    asyncWrapper(categoryController.getCategory),
+);
+
+router.post(
+    "/delete",
+    authenticateAccessToken as RequestHandler,
+    categoryFindValidator,
+    asyncWrapper(categoryController.delete),
+);
 
 export default router;

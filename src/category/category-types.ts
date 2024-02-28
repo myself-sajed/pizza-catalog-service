@@ -20,3 +20,7 @@ export interface Category {
     price: PriceConfiguration;
     attributes: Attributes[];
 }
+export interface CategoryUpdateData {
+    categoryIdToUpdate: string;
+    dataToUpdate: Category;
+}
