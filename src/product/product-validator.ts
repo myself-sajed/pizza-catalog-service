@@ -11,6 +11,7 @@ export default [
         .withMessage("priceConfiguration field is missing"),
     body("attributes").exists().withMessage("Attribute field is missing"),
     body("image").custom((value, { req }) => {
+        console.log("Req: ", req.files);
         if (!req.files) {
             throw new Error(`Invalid image used in the form`);
         }

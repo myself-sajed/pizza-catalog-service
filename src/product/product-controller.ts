@@ -1,10 +1,17 @@
 import { Request, Response } from "express";
+import mime from "mime-types";
+import { v4 as uuid } from "uuid";
 import { validationResult } from "express-validator";
 import { ProductService } from "./product-service";
 import { ProductData } from "./product-types";
+import { ImageCRUD } from "../common/constants/ImageCRUDTypes";
+import { UploadedFile } from "express-fileupload";
 
 export class ProductController {
-    constructor(private productService: ProductService) {}
+    constructor(
+        private productService: ProductService,
+        private imageCRUDService: ImageCRUD,
+    ) {}
 
     create = async (req: Request, res: Response) => {
         const result = validationResult(req);
@@ -12,11 +19,22 @@ export class ProductController {
             return res.status(400).json({ errors: result.array() });
         }
 
-        console.log("Uploaded file", req.files);
+        const image = req.files!.image as UploadedFile;
+        const imageId = uuid();
+        const imageName = `${imageId}.${mime.extension(image.mimetype)}`;
+        const imageData = image.data.buffer;
+
+        // upload image here...
+        const uploadResult = await this.imageCRUDService.upload({
+            imageName,
+            imageData,
+        });
+
+        console.log(uploadResult);
+
         const {
             name,
             description,
-            // image,
             priceConfiguration,
             attributes,
             tenantId,
@@ -27,7 +45,7 @@ export class ProductController {
         const productData = {
             name,
             description,
-            image: "imageupload.jpg",
+            image: imageName,
             priceConfiguration: JSON.parse(priceConfiguration) as string,
             attributes: JSON.parse(attributes) as string,
             tenantId,
