@@ -25,12 +25,10 @@ export class ProductController {
         const imageData = image.data.buffer;
 
         // upload image here...
-        const uploadResult = await this.imageCRUDService.upload({
+        await this.imageCRUDService.upload({
             imageName,
             imageData,
         });
-
-        console.log(uploadResult);
 
         const {
             name,
@@ -57,66 +55,59 @@ export class ProductController {
         res.send(product);
     };
 
-    // async update(req: Request, res: Response) {
-    //     const result = validationResult(req);
-    //     if (!result.isEmpty()) {
-    //         return res.status(400).json({ errors: result.array() });
-    //     }
+    update = async (req: Request, res: Response) => {
+        const result = validationResult(req);
+        if (!result.isEmpty()) {
+            return res.status(400).json({ errors: result.array() });
+        }
 
-    //     const { dataToUpdate, categoryIdToUpdate } =
-    //         req.body as CategoryUpdateData;
+        const productId = req.params.productId;
 
-    //     const category = await this.categoryService.update({
-    //         dataToUpdate,
-    //         categoryIdToUpdate,
-    //     });
+        const currentProduct = await this.productService.getProduct(productId);
+        const oldImage = currentProduct?.image as string;
 
-    //     res.send(category);
-    // }
+        let imageName: string | undefined;
 
-    // async getList(req: Request, res: Response) {
-    //     const list = await this.categoryService.getList();
-    //     res.send(list);
-    // }
+        console.log("Image data is here :", req.files?.image);
 
-    // async getCategory(req: Request, res: Response) {
-    //     const result = validationResult(req);
-    //     if (!result.isEmpty()) {
-    //         return res.status(400).json({ errors: result.array() });
-    //     }
+        if (req.files?.image) {
+            const image = req.files.image as UploadedFile;
+            const imageId = uuid();
+            imageName = `${imageId}.${mime.extension(image.mimetype)}`;
+            const imageData = image.data.buffer;
+            await this.imageCRUDService.upload({
+                imageName,
+                imageData,
+            });
 
-    //     const { id } = req.body as Record<string, string>;
-    //     try {
-    //         const category = await this.categoryService.getCategory(id);
-    //         if (category) {
-    //             res.send(category);
-    //         } else {
-    //             res.status(500).json({
-    //                 message: `Could not delete find category with id: ${id}`,
-    //             });
-    //         }
-    //     } catch (error) {
-    //         res.status(500).json({
-    //             message: `Could not delete find category with id: ${id}`,
-    //         });
-    //     }
-    // }
+            await this.imageCRUDService.delete(oldImage);
+        }
 
-    // async delete(req: Request, res: Response) {
-    //     const result = validationResult(req);
-    //     if (!result.isEmpty()) {
-    //         return res.status(400).json({ errors: result.array() });
-    //     }
+        const {
+            name,
+            description,
+            priceConfiguration,
+            attributes,
+            tenantId,
+            categoryId,
+            isPublish,
+        } = req.body as ProductData;
 
-    //     const { id } = req.body as Record<string, string>;
+        const productData = {
+            name,
+            description,
+            image: imageName || oldImage,
+            priceConfiguration: JSON.parse(priceConfiguration) as string,
+            attributes: JSON.parse(attributes) as string,
+            tenantId,
+            categoryId,
+            isPublish,
+        };
 
-    //     try {
-    //         await this.categoryService.delete(id);
-    //         res.status(200).json({ message: "Category deleted successfully" });
-    //     } catch (error) {
-    //         res.status(500).json({
-    //             message: `Could not delete category with id: ${id}`,
-    //         });
-    //     }
-    // }
+        const product = await this.productService.update(
+            productId,
+            productData,
+        );
+        res.send(product);
+    };
 }

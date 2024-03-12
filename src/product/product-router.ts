@@ -13,6 +13,7 @@ import { ProductService } from "./product-service";
 import { ProductController } from "./product-controller";
 import fileUpload from "express-fileupload";
 import { S3Storage } from "../services/S3Storage";
+import updateProductValidator from "./update-product-validator";
 
 // wrapper for each request controller for catching errors efficiently, because global error handler only does not catch error when they are thown in async functions
 const asyncWrapper = (requestHandler: RequestHandler) => {
@@ -37,18 +38,25 @@ const productController = new ProductController(
 router.post(
     "/create",
     authenticateAccessToken as RequestHandler,
-    canAccess([Roles.Admin]),
+    canAccess([Roles.Admin, Roles.Manager]),
     fileUpload(),
     productValidator,
     asyncWrapper(productController.create),
 );
+router.put(
+    "/update/:productId",
+    authenticateAccessToken as RequestHandler,
+    canAccess([Roles.Admin, Roles.Manager]),
+    fileUpload(),
+    updateProductValidator,
+    asyncWrapper(productController.update),
+);
 
-// router.post(
-//     "/update",
+// router.get(
+//     "/getProduct/:productId",
 //     authenticateAccessToken as RequestHandler,
 //     canAccess([Roles.Admin]),
-//     categoryUpdateValidator,
-//     asyncWrapper(categoryController.update),
+//     asyncWrapper(productController.getProduct),
 // );
 
 // router.get(

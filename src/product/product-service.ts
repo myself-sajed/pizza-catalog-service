@@ -6,6 +6,17 @@ export class ProductService {
         const product = new ProductModel(productData);
         return product.save();
     }
+    async update(productId: string, productData: ProductData) {
+        return await ProductModel.findOneAndUpdate(
+            { _id: productId },
+            { $set: productData },
+            { new: true },
+        );
+    }
+
+    async getProduct(productId: string) {
+        return ProductModel.findOne({ _id: productId });
+    }
 
     // async update(updateData: CategoryUpdateData) {
     //     const { categoryIdToUpdate, dataToUpdate } = updateData;

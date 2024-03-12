@@ -1,4 +1,8 @@
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+    DeleteObjectCommand,
+    PutObjectCommand,
+    S3Client,
+} from "@aws-sdk/client-s3";
 import { ImageCRUD, ImageUploadData } from "../common/constants/ImageCRUDTypes";
 import config from "config";
 
@@ -27,5 +31,16 @@ export class S3Storage implements ImageCRUD {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
         await this.client.send(new PutObjectCommand(params));
+    }
+
+    async delete(oldImage: string): Promise<void> {
+        const params = {
+            Bucket: "pizza-catalog-service",
+            Key: oldImage,
+        };
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        await this.client.send(new DeleteObjectCommand(params));
     }
 }
