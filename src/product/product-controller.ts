@@ -6,6 +6,9 @@ import { ProductService } from "./product-service";
 import { ProductData } from "./product-types";
 import { ImageCRUD } from "../common/constants/ImageCRUDTypes";
 import { UploadedFile } from "express-fileupload";
+import { RequestWithAuthInfo } from "../config";
+import { Roles } from "../config/constants";
+import createHttpError from "http-errors";
 
 export class ProductController {
     constructor(
@@ -68,7 +71,21 @@ export class ProductController {
 
         let imageName: string | undefined;
 
-        console.log("Image data is here :", req.files?.image);
+        console.log("Req auth:", (req as RequestWithAuthInfo).auth);
+
+        const authReq = (req as RequestWithAuthInfo).auth;
+
+        console.log("Current product:", currentProduct);
+        console.log("auth log:", authReq);
+
+        if (authReq.role !== Roles.Admin) {
+            if (authReq?.tenant !== String(currentProduct?.tenantId)) {
+                throw createHttpError(
+                    500,
+                    "You're not allowed to update this product",
+                );
+            }
+        }
 
         if (req.files?.image) {
             const image = req.files.image as UploadedFile;
