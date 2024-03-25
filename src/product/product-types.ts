@@ -1,4 +1,5 @@
 import { Request } from "express";
+import mongoose from "mongoose";
 
 export type priceType = "base" | "additional";
 export type widgetType = "switch" | "radio";
@@ -20,4 +21,9 @@ export interface RequestWithAuthInfo extends Request {
         role: string;
         id?: string;
     };
+}
+export interface GetProductFilter {
+    isPublish?: boolean;
+    tenantId?: string;
+    categoryId?: mongoose.Types.ObjectId;
 }

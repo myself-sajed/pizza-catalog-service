@@ -3,12 +3,13 @@ import mime from "mime-types";
 import { v4 as uuid } from "uuid";
 import { validationResult } from "express-validator";
 import { ProductService } from "./product-service";
-import { ProductData } from "./product-types";
+import { GetProductFilter, ProductData } from "./product-types";
 import { ImageCRUD } from "../common/constants/ImageCRUDTypes";
 import { UploadedFile } from "express-fileupload";
 import { RequestWithAuthInfo } from "../config";
 import { Roles } from "../config/constants";
 import createHttpError from "http-errors";
+import mongoose from "mongoose";
 
 export class ProductController {
     constructor(
@@ -126,5 +127,33 @@ export class ProductController {
             productData,
         );
         res.send(product);
+    };
+
+    getProducts = async (req: Request, res: Response) => {
+        const { q, isPublish, categoryId, tenantId } = req.query;
+
+        const filter: GetProductFilter = {};
+
+        if (isPublish === "true") {
+            filter.isPublish = true;
+        }
+
+        if (
+            categoryId &&
+            mongoose.Types.ObjectId.isValid(categoryId as string)
+        ) {
+            filter.categoryId = new mongoose.Types.ObjectId(
+                categoryId as string,
+            );
+        }
+
+        if (tenantId) filter.tenantId = tenantId as string;
+
+        const products = await this.productService.getProducts(
+            q as string,
+            filter,
+        );
+
+        res.send(products);
     };
 }

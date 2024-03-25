@@ -51,32 +51,6 @@ router.put(
     updateProductValidator,
     asyncWrapper(productController.update),
 );
-
-// router.get(
-//     "/getProduct/:productId",
-//     authenticateAccessToken as RequestHandler,
-//     canAccess([Roles.Admin]),
-//     asyncWrapper(productController.getProduct),
-// );
-
-// router.get(
-//     "/getList",
-//     authenticateAccessToken as RequestHandler,
-//     asyncWrapper(categoryController.getList),
-// );
-
-// router.post(
-//     "/getCategory",
-//     authenticateAccessToken as RequestHandler,
-//     categoryFindValidator,
-//     asyncWrapper(categoryController.getCategory),
-// );
-
-// router.post(
-//     "/delete",
-//     authenticateAccessToken as RequestHandler,
-//     categoryFindValidator,
-//     asyncWrapper(categoryController.delete),
-// );
+router.get("/getProducts", asyncWrapper(productController.getProducts));
 
 export default router;

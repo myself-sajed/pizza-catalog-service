@@ -1,5 +1,6 @@
+import productModel from "./product-model";
 import ProductModel from "./product-model";
-import { ProductData } from "./product-types";
+import { GetProductFilter, ProductData } from "./product-types";
 
 export class ProductService {
     async create(productData: ProductData) {
@@ -18,46 +19,43 @@ export class ProductService {
         return ProductModel.findOne({ _id: productId });
     }
 
-    // async update(updateData: CategoryUpdateData) {
-    //     const { categoryIdToUpdate, dataToUpdate } = updateData;
-    //     try {
-    //         const result = await CategoryModel.findOneAndUpdate(
-    //             { _id: categoryIdToUpdate },
-    //             dataToUpdate,
-    //             { new: true },
-    //         );
+    async getProducts(q: string, filters: GetProductFilter) {
+        const query = new RegExp(q, "i");
 
-    //         if (result) {
-    //             return result;
-    //         } else {
-    //             throw new Error(
-    //                 "No matching category found with the id " +
-    //                     categoryIdToUpdate,
-    //             );
-    //         }
-    //     } catch (error) {
-    //         if (error instanceof Error) {
-    //             throw error.message;
-    //         }
-    //     }
-    // }
+        const matchQuery = {
+            ...filters,
+            name: query,
+        };
 
-    // async getList() {
-    //     return await CategoryModel.find({});
-    // }
+        const aggregate = productModel.aggregate([
+            {
+                $match: matchQuery,
+            },
+            {
+                $lookup: {
+                    from: "categories",
+                    localField: "categoryId",
+                    as: "category",
+                    foreignField: "_id",
+                    pipeline: [
+                        {
+                            $project: {
+                                _id: 1,
+                                name: 1,
+                                price: 1,
+                                attributes: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $unwind: "$category",
+            },
+        ]);
 
-    // async getCategory(id: string) {
-    //     try {
-    //         return await CategoryModel.findOne({ _id: id });
-    //     } catch (error) {
-    //         throw new Error(`Could not find category with id: ${id}`);
-    //     }
-    // }
-    // async delete(id: string) {
-    //     try {
-    //         return await CategoryModel.findOneAndDelete({ _id: id });
-    //     } catch (error) {
-    //         throw new Error(`Could not delete category with id: ${id}`);
-    //     }
-    // }
+        const products = await aggregate.exec();
+
+        return products as ProductData[];
+    }
 }
