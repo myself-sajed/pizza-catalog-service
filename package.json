@@ -51,6 +51,7 @@
         "@types/cookie-parser": "^1.4.7",
         "@types/express-fileupload": "^1.4.4",
         "@types/mime-types": "^2.1.4",
+        "@types/mongoose-aggregate-paginate-v2": "^1.0.12",
         "config": "^3.3.11",
         "cookie-parser": "^1.4.6",
         "cors": "^2.8.5",
@@ -64,6 +65,7 @@
         "jwks-rsa": "^3.1.0",
         "mime-types": "^2.1.35",
         "mongoose": "^8.1.2",
+        "mongoose-aggregate-paginate-v2": "^1.0.7",
         "uuid": "^9.0.1",
         "winston": "^3.10.0"
     }

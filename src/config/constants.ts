@@ -3,3 +3,10 @@ export const Roles = {
     Admin: "Admin",
     Manager: "Manager",
 } as const;
+
+export const paginationLabels = {
+    docs: "data",
+    totalDocs: "total",
+    limit: "pageSize",
+    page: "currentPage",
+} as const;

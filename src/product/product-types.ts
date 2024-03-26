@@ -5,6 +5,7 @@ export type priceType = "base" | "additional";
 export type widgetType = "switch" | "radio";
 
 export interface ProductData {
+    id?: string;
     name: string;
     description: string;
     image: string;
@@ -26,4 +27,9 @@ export interface GetProductFilter {
     isPublish?: boolean;
     tenantId?: string;
     categoryId?: mongoose.Types.ObjectId;
+}
+
+export interface PaginationFilters {
+    page: number;
+    limit: number;
 }

@@ -67,8 +67,10 @@ export class ProductController {
 
         const productId = req.params.productId;
 
-        const currentProduct = await this.productService.getProduct(productId);
-        const oldImage = currentProduct?.image as string;
+        const currentProduct = (await this.productService.getProduct(
+            productId,
+        )) as ProductData;
+        const oldImage = currentProduct?.image;
 
         let imageName: string | undefined;
 
@@ -131,6 +133,10 @@ export class ProductController {
 
     getProducts = async (req: Request, res: Response) => {
         const { q, isPublish, categoryId, tenantId } = req.query;
+        const paginateFilters = {
+            page: req.query.page ? parseInt(req.query.page as string) : 1,
+            limit: req.query.limit ? parseInt(req.query.limit as string) : 10,
+        };
 
         const filter: GetProductFilter = {};
 
@@ -152,6 +158,7 @@ export class ProductController {
         const products = await this.productService.getProducts(
             q as string,
             filter,
+            paginateFilters,
         );
 
         res.send(products);
