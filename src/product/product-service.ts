@@ -24,6 +24,10 @@ export class ProductService {
         return ProductModel.findOne({ _id: productId });
     }
 
+    async deleteProduct(productId: string) {
+        return ProductModel.deleteOne({ _id: productId });
+    }
+
     async getProducts(
         q: string,
         filters: GetProductFilter,

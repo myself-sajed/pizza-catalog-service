@@ -131,6 +131,33 @@ export class ProductController {
         res.send(product);
     };
 
+    getProduct = async (req: Request, res: Response) => {
+        const { productId } = req.params;
+        const product = (await this.productService.getProduct(
+            productId,
+        )) as ProductData;
+        res.status(200).send(product);
+    };
+
+    deleteProduct = async (req: Request, res: Response) => {
+        const result = validationResult(req);
+        if (!result.isEmpty()) {
+            return res.status(400).json({ errors: result.array() });
+        }
+
+        const { productId } = req.params;
+        const product = (await this.productService.getProduct(
+            productId,
+        )) as ProductData;
+
+        if (product) {
+            await this.productService.deleteProduct(productId);
+            res.status(200).send({ msg: "deleted" });
+        } else {
+            res.status(500).send({ msg: "error" });
+        }
+    };
+
     getProducts = async (req: Request, res: Response) => {
         const { q, isPublish, categoryId, tenantId } = req.query;
         const paginateFilters = {
