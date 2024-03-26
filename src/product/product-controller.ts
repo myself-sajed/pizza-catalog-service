@@ -25,7 +25,7 @@ export class ProductController {
 
         const image = req.files!.image as UploadedFile;
         const imageId = uuid();
-        const imageName = `${imageId}.${mime.extension(image.mimetype)}`;
+        const imageName = imageId;
         const imageData = image.data.buffer;
 
         // upload image here...
@@ -155,12 +155,28 @@ export class ProductController {
 
         if (tenantId) filter.tenantId = tenantId as string;
 
-        const products = await this.productService.getProducts(
+        const dbProducts = await this.productService.getProducts(
             q as string,
             filter,
             paginateFilters,
         );
 
-        res.send(products);
+        const products = (dbProducts.data as ProductData[]).map((product) => {
+            const imageURL = this.imageCRUDService.generateImageURL(
+                product.image,
+            );
+            console.log("image:", imageURL);
+            return {
+                ...product,
+                image: imageURL,
+            };
+        });
+
+        res.send({
+            data: products,
+            total: dbProducts.total,
+            pageSize: dbProducts.pageSize,
+            currentPage: dbProducts.currentPage,
+        });
     };
 }

@@ -5,6 +5,7 @@ import {
 } from "@aws-sdk/client-s3";
 import { ImageCRUD, ImageUploadData } from "../common/constants/ImageCRUDTypes";
 import config from "config";
+import createHttpError from "http-errors";
 
 export class S3Storage implements ImageCRUD {
     private client: S3Client;
@@ -39,8 +40,35 @@ export class S3Storage implements ImageCRUD {
             Key: oldImage,
         };
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore
         await this.client.send(new DeleteObjectCommand(params));
     }
+
+    generateImageURL(filename: string): string {
+        const bucket = config.get("storage.bucket");
+        const region = config.get("storage.region");
+
+        console.log("data is coming:", filename, bucket, region);
+
+        if (typeof bucket === "string" && typeof region === "string") {
+            return `https://${bucket}.s3.${region}.amazonaws.com/${filename}`;
+        }
+
+        const error = createHttpError(
+            "503",
+            "Invalid bucket configuration for generating image URLs",
+        );
+        throw error;
+    }
+
+    // async generateImageURL(filename: string){
+    //     // https://pizza-catalog-service.s3.ap-south-1.amazonaws.com/46189b27-6f96-42ea-b3cd-176d388642bf.jpg
+
+    //     const bucket = config.get("bucket")
+    //     const region = config.get("region")
+
+    //     if(bucket && region) return `https://${bucket}.s3.${region}.amazonaws.com/${filename}`
+
+    //     const error =  createHttpError("503", "Invalid bucket configuration for generating image URLs")
+    //     throw error
+    // }
 }

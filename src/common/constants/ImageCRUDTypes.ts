@@ -6,5 +6,5 @@ export interface ImageUploadData {
 export interface ImageCRUD {
     upload: (data: ImageUploadData) => Promise<void>;
     delete: (imageId: string) => Promise<void>;
-    // getImage: () => Promise<void>;
+    generateImageURL: (filename: string) => string;
 }
