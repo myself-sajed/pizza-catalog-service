@@ -74,12 +74,7 @@ export class ProductController {
 
         let imageName: string | undefined;
 
-        console.log("Req auth:", (req as RequestWithAuthInfo).auth);
-
         const authReq = (req as RequestWithAuthInfo).auth;
-
-        console.log("Current product:", currentProduct);
-        console.log("auth log:", authReq);
 
         if (authReq.role !== Roles.Admin) {
             if (authReq?.tenant !== String(currentProduct?.tenantId)) {
@@ -152,6 +147,8 @@ export class ProductController {
 
         if (product) {
             await this.productService.deleteProduct(productId);
+            await this.imageCRUDService.delete(product.image);
+
             res.status(200).send({ msg: "deleted" });
         } else {
             res.status(500).send({ msg: "error" });
@@ -192,7 +189,6 @@ export class ProductController {
             const imageURL = this.imageCRUDService.generateImageURL(
                 product.image,
             );
-            console.log("image:", imageURL);
             return {
                 ...product,
                 image: imageURL,
