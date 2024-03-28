@@ -21,38 +21,41 @@ const priceConfigurationSchema = new mongoose.Schema({
     },
 });
 
-const productSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
+const productSchema = new mongoose.Schema(
+    {
+        name: {
+            type: String,
+            required: true,
+        },
+        description: {
+            type: String,
+            required: true,
+        },
+        image: {
+            type: String,
+            required: true,
+        },
+        priceConfiguration: {
+            type: Map,
+            of: priceConfigurationSchema,
+        },
+        attributes: [attributeSchema],
+        tenantId: {
+            type: String,
+            required: true,
+        },
+        categoryId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Category",
+        },
+        isPublish: {
+            type: Boolean,
+            required: false,
+            default: false,
+        },
     },
-    description: {
-        type: String,
-        required: true,
-    },
-    image: {
-        type: String,
-        required: true,
-    },
-    priceConfiguration: {
-        type: Map,
-        of: priceConfigurationSchema,
-    },
-    attributes: [attributeSchema],
-    tenantId: {
-        type: String,
-        required: true,
-    },
-    categoryId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Category",
-    },
-    isPublish: {
-        type: Boolean,
-        required: false,
-        default: false,
-    },
-});
+    { timestamps: true },
+);
 
 productSchema.plugin(mongooseAggregatePaginate);
 
