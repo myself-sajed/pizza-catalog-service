@@ -46,11 +46,7 @@ router.post(
     asyncWrapper(categoryController.update),
 );
 
-router.get(
-    "/getList",
-    authenticateAccessToken as RequestHandler,
-    asyncWrapper(categoryController.getList),
-);
+router.get("/getList", asyncWrapper(categoryController.getList));
 
 router.post(
     "/getCategory",

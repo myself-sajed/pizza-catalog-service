@@ -4,8 +4,19 @@ import categoryRouter from "./category/category-router";
 import productRouter from "./product/product-router";
 import toppingRouter from "./toppings/topping-router";
 import cookieParser from "cookie-parser";
+import cors from "cors";
+import config from "config";
 
 const app = express();
+
+const ORIGIN_URI = config.get("server.originURI");
+app.use(
+    cors({
+        origin: [ORIGIN_URI as string],
+        credentials: true,
+    }),
+);
+
 app.use(express.json());
 app.use(cookieParser());
 
