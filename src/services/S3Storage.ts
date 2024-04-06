@@ -47,8 +47,6 @@ export class S3Storage implements ImageCRUD {
         const bucket = config.get("storage.bucket");
         const region = config.get("storage.region");
 
-        console.log("data is coming:", filename, bucket, region);
-
         if (typeof bucket === "string" && typeof region === "string") {
             return `https://${bucket}.s3.${region}.amazonaws.com/${filename}`;
         }
