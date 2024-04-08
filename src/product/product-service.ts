@@ -65,6 +65,9 @@ export class ProductService {
             {
                 $unwind: "$category",
             },
+            {
+                $sort: { createdAt: -1 },
+            },
         ]);
 
         const products = await ProductModel.aggregatePaginate(aggregate, {
