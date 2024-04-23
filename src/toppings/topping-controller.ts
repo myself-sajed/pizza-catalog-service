@@ -158,7 +158,6 @@ export class ToppingController {
             const imageURL = this.imageCRUDService.generateImageURL(
                 product.image,
             );
-            console.log("image:", imageURL);
             return {
                 ...product,
                 image: imageURL,

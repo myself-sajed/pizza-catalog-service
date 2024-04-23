@@ -9,10 +9,11 @@ import config from "config";
 
 const app = express();
 
-const ORIGIN_URI = config.get("server.originURI");
+const ORIGIN_URI_Admin = config.get("server.originURIAdmin");
+const ORIGIN_URI_Client = config.get("server.originURIClient");
 app.use(
     cors({
-        origin: [ORIGIN_URI as string],
+        origin: [ORIGIN_URI_Admin as string, ORIGIN_URI_Client as string],
         credentials: true,
     }),
 );
