@@ -177,7 +177,8 @@ export class ProductController {
             );
         }
 
-        if (tenantId) filter.tenantId = tenantId as string;
+        if (tenantId && tenantId !== "null" && tenantId !== "undefined")
+            filter.tenantId = tenantId as string;
 
         const dbProducts = await this.productService.getProducts(
             q as string,

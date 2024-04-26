@@ -147,7 +147,8 @@ export class ToppingController {
             filter.price = parseInt(price as string);
         }
 
-        if (tenantId) filter.tenantId = tenantId as string;
+        if (tenantId && tenantId !== "null" && tenantId !== "undefined")
+            filter.tenantId = tenantId as string;
 
         const dbToppings = await this.toppingService.toppings(
             q as string,
