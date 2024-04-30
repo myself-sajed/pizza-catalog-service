@@ -20,4 +20,5 @@ export default [
             return true;
         }),
     body("attributes").exists().withMessage("Attribute field is missing"),
+    body("hasToppings").exists().withMessage("hasTopping field is missing"),
 ];

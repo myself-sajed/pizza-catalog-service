@@ -19,6 +19,7 @@ export interface Category {
     name: string;
     price: PriceConfiguration;
     attributes: Attributes[];
+    hasToppings: boolean;
 }
 export interface CategoryUpdateData {
     categoryIdToUpdate: string;

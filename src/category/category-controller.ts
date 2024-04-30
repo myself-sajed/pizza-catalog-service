@@ -18,12 +18,13 @@ export class CategoryController {
             return res.status(400).json({ errors: result.array() });
         }
 
-        const { name, price, attributes } = req.body as Category;
+        const { name, price, attributes, hasToppings } = req.body as Category;
 
         const category = await this.categoryService.create({
             name,
             price,
             attributes,
+            hasToppings,
         });
 
         res.send({ id: category._id, name: name });
