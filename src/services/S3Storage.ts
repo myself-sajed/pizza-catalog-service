@@ -24,7 +24,7 @@ export class S3Storage implements ImageCRUD {
         const imageData = data.imageData;
 
         const params = {
-            Bucket: "pizza-catalog-service",
+            Bucket: config.get("storage.bucket"),
             Key: imageName,
             Body: imageData,
         };
