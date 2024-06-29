@@ -14,6 +14,7 @@ import { ProductController } from "./product-controller";
 import fileUpload from "express-fileupload";
 import { S3Storage } from "../services/S3Storage";
 import updateProductValidator from "./update-product-validator";
+import { createMessageProducerBroker } from "../common/factories/brokerFactory";
 
 // wrapper for each request controller for catching errors efficiently, because global error handler only does not catch error when they are thown in async functions
 const asyncWrapper = (requestHandler: RequestHandler) => {
@@ -30,9 +31,11 @@ const asyncWrapper = (requestHandler: RequestHandler) => {
 const router = express.Router();
 const productService = new ProductService();
 const imageCRUDService = new S3Storage();
+const broker = createMessageProducerBroker();
 const productController = new ProductController(
     productService,
     imageCRUDService,
+    broker,
 );
 
 router.post(

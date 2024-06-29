@@ -5,7 +5,7 @@ export type priceType = "base" | "additional";
 export type widgetType = "switch" | "radio";
 
 export interface ProductData {
-    id?: string;
+    _id?: string;
     name: string;
     description: string;
     image: string;

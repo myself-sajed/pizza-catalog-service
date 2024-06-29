@@ -14,6 +14,7 @@ import toppingValidator from "./topping-validator";
 import { ToppingController } from "./topping-controller";
 import { ToppingService } from "./topping-service";
 import updateToppingValidator from "./update-topping-validator";
+import { createMessageProducerBroker } from "../common/factories/brokerFactory";
 
 // wrapper for each request controller for catching errors efficiently, because global error handler only does not catch error when they are thown in async functions
 const asyncWrapper = (requestHandler: RequestHandler) => {
@@ -30,9 +31,11 @@ const asyncWrapper = (requestHandler: RequestHandler) => {
 const router = express.Router();
 const toppingService = new ToppingService();
 const imageCRUDService = new S3Storage();
+const broker = createMessageProducerBroker();
 const toppingController = new ToppingController(
     toppingService,
     imageCRUDService,
+    broker,
 );
 
 router.post(

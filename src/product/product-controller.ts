@@ -10,11 +10,13 @@ import { RequestWithAuthInfo } from "../config";
 import { Roles } from "../config/constants";
 import createHttpError from "http-errors";
 import mongoose from "mongoose";
+import { MessageProducerBroker } from "../common/constants/brokerType";
 
 export class ProductController {
     constructor(
         private productService: ProductService,
         private imageCRUDService: ImageCRUD,
+        private broker: MessageProducerBroker,
     ) {}
 
     create = async (req: Request, res: Response) => {
@@ -56,6 +58,15 @@ export class ProductController {
         };
 
         const product = await this.productService.create(productData);
+
+        await this.broker.sendMessage(
+            "product",
+            JSON.stringify({
+                _id: product._id,
+                priceConfiguration: product.priceConfiguration,
+            }),
+        );
+
         res.send(product);
     };
 
@@ -123,6 +134,15 @@ export class ProductController {
             productId,
             productData,
         );
+
+        await this.broker.sendMessage(
+            "product",
+            JSON.stringify({
+                _id: product._id,
+                priceConfiguration: product.priceConfiguration,
+            }),
+        );
+
         res.send(product);
     };
 

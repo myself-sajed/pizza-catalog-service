@@ -4,7 +4,7 @@ export type priceType = "base" | "additional";
 export type widgetType = "switch" | "radio";
 
 export interface ToppingData {
-    id?: string;
+    _id?: string;
     name: string;
     price: number;
     image: string;

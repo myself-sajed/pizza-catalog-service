@@ -12,11 +12,13 @@ import { ToppingService } from "./topping-service";
 import { Roles } from "../config/constants";
 import createHttpError from "http-errors";
 import mime from "mime-types";
+import { MessageProducerBroker } from "../common/constants/brokerType";
 
 export class ToppingController {
     constructor(
         private toppingService: ToppingService,
         private imageCRUDService: ImageCRUD,
+        private broker: MessageProducerBroker,
     ) {}
 
     create = async (req: Request, res: Response) => {
@@ -47,6 +49,15 @@ export class ToppingController {
         };
 
         const topping = await this.toppingService.create(toppingData);
+
+        await this.broker.sendMessage(
+            "topping",
+            JSON.stringify({
+                _id: topping._id,
+                price: topping.price,
+            }),
+        );
+
         res.send(topping);
     };
 
@@ -103,6 +114,15 @@ export class ToppingController {
             toppingId,
             toppingData,
         );
+
+        await this.broker.sendMessage(
+            "topping",
+            JSON.stringify({
+                _id: topping._id,
+                price: topping.price,
+            }),
+        );
+
         res.send(topping);
     };
 
