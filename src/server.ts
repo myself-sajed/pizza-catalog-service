@@ -13,6 +13,7 @@ const startServer = async () => {
         await initDB();
         broker = createMessageProducerBroker();
         await broker.connect();
+        console.log("Message Broker connected...");
 
         logger.info("Database connected successfully");
         app.listen(PORT, () => logger.info(`Listening on port ${PORT}`));
@@ -20,6 +21,7 @@ const startServer = async () => {
         if (err instanceof Error) {
             if (broker) {
                 await broker.disconnect();
+                console.log("Message Broker is disconnected...");
             }
             logger.error(err.message);
             logger.on("finish", () => {
