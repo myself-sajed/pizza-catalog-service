@@ -9,9 +9,10 @@ let messageProducer: MessageProducerBroker | null = null;
 export function createMessageProducerBroker() {
     const broker = config.get("kafka.broker");
     if (!messageProducer) {
-        messageProducer = new KafkaProducerBroker("catalog-service", [
-            broker as string,
-        ]);
+        messageProducer = new KafkaProducerBroker(
+            "catalog-service",
+            broker as string[],
+        );
     }
 
     return messageProducer;

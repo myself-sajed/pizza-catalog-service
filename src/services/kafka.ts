@@ -1,11 +1,27 @@
-import { Kafka, Producer } from "kafkajs";
+import { Kafka, KafkaConfig, Producer } from "kafkajs";
 import { MessageProducerBroker } from "../common/constants/brokerType";
+import config from "config";
 
 export class KafkaProducerBroker implements MessageProducerBroker {
     private producer: Producer;
 
     constructor(clientId: string, brokers: string[]) {
-        const kafka = new Kafka({ clientId, brokers });
+        let kafkaConfig: KafkaConfig = { clientId, brokers };
+
+        if (process.env.NODE_ENV === "production") {
+            kafkaConfig = {
+                ...kafkaConfig,
+                ssl: true,
+                connectionTimeout: 45000,
+                sasl: {
+                    username: config.get("kafka.sasl.username"),
+                    password: config.get("kafka.sasl.password"),
+                    mechanism: "plain",
+                },
+            };
+        }
+
+        const kafka = new Kafka(kafkaConfig);
         this.producer = kafka.producer();
     }
 
