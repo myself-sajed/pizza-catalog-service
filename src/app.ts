@@ -21,7 +21,7 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-//routes
+//global route for testing
 app.get("/", (req: Request, res: Response) => {
     res.json({ message: "Hello from catalog service!" });
 });
